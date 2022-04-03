@@ -1,21 +1,30 @@
-package com.gb.dictionary.view.main
+package com.gb.dictionary.view.dictionary
 
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.gb.dictionary.App
 import com.gb.dictionary.R
 import com.gb.dictionary.databinding.ActivityMainBinding
+import com.gb.dictionary.screens.AppScreens
 import com.gb.dictionary.view.base.BackButtonListener
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
-import moxy.MvpAppCompatActivity
-import moxy.ktx.moxyPresenter
+import javax.inject.Inject
 
-class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
+class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private lateinit var binding: ActivityMainBinding
 
+    @Inject
+    lateinit var router: Router
+
+    @Inject
+    lateinit var navigationHolder: NavigatorHolder
+
     private val navigator = AppNavigator(this, R.id.container)
 
-    private val presenter by moxyPresenter { MainActivityPresenter(App.instance.router) }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,18 +33,20 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
         setContentView(binding.root)
 
         binding.inputLayout.setEndIconOnClickListener {
-            presenter.getWord(binding.inputEditText.text.toString())
+            router.replaceScreen(AppScreens.dictionaryScreen(binding.inputEditText.text.toString()))
         }
+
+        App.instance.appComponent.inject(this)
     }
 
     override fun onResumeFragments() {
         super.onResumeFragments()
-        App.instance.navigationHolder.setNavigator(navigator)
+        navigationHolder.setNavigator(navigator)
     }
 
     override fun onPause() {
         super.onPause()
-        App.instance.navigationHolder.removeNavigator()
+        navigationHolder.removeNavigator()
     }
 
     override fun onBackPressed() {
@@ -46,6 +57,6 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
                 return
             }
         }
-        presenter.backPressed()
+        router.exit()
     }
 }

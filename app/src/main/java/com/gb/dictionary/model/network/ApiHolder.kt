@@ -15,6 +15,7 @@ object ApiHolder {
         retrofit.create<ApiService>()
     }
 
+
     private val okHttpClient by lazy {
         OkHttpClient().newBuilder()
             .addInterceptor(HttpLoggingInterceptor())

@@ -4,31 +4,31 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gb.dictionary.App
 import com.gb.dictionary.databinding.FragmentDictionaryBinding
 import com.gb.dictionary.model.data.DataModel
-import com.gb.dictionary.model.domain.ApiWordsRepos
-import com.gb.dictionary.model.network.ApiHolder
 import com.gb.dictionary.view.base.BackButtonListener
 import com.gb.dictionary.view.dictionary.adapter.DictionaryAdapter
-import moxy.MvpAppCompatFragment
-import moxy.ktx.moxyPresenter
+import com.github.terrakok.cicerone.Router
+import javax.inject.Inject
 
-class DictionaryFragment: MvpAppCompatFragment(), DictionaryView, BackButtonListener{
+class DictionaryFragment: Fragment(), BackButtonListener{
+
 
     private var _binding: FragmentDictionaryBinding? = null
     private val binding
         get() = _binding!!
 
-    private val presenter by moxyPresenter {
-        DictionaryFragmentPresenter(
-            App.instance.router,
-            ApiWordsRepos(ApiHolder.ApiService),
-            initWord.toString()
-        )
+    @Inject
+    lateinit var router: Router
+
+    private val viewModel: DictionaryViewModel by lazy {
+        ViewModelProvider(this).get(DictionaryViewModel::class.java)
     }
 
     private val adapter by lazy {
@@ -46,18 +46,38 @@ class DictionaryFragment: MvpAppCompatFragment(), DictionaryView, BackButtonList
     ): View {
         _binding = FragmentDictionaryBinding.inflate(inflater, container, false)
         return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.getWord(initWord!!).observe(viewLifecycleOwner, Observer{
+            rangerData(it)
+        })
+
+        App.instance.appComponent.inject(this)
 
         binding.rvResultSearch.layoutManager = LinearLayoutManager(requireContext())
         binding.rvResultSearch.adapter = adapter
+
+
     }
 
+    private fun rangerData(words: List<DataModel>){
+        adapter.submitList(words)
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
+
+
     override fun backPressed(): Boolean {
-       presenter.backPressed()
+       router.exit()
         return true
     }
 
@@ -72,12 +92,4 @@ class DictionaryFragment: MvpAppCompatFragment(), DictionaryView, BackButtonList
         }
     }
 
-    override fun updateList(words: List<DataModel>) {
-        adapter.submitList(words)
-    }
-
-    override fun showError(message: String?) {
-        Toast.makeText(requireContext(), message.orEmpty(), Toast.LENGTH_SHORT)
-            .show()
-    }
 }

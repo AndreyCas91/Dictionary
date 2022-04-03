@@ -1,18 +1,14 @@
 package com.gb.dictionary
 
 import android.app.Application
-import com.github.terrakok.cicerone.Cicerone
-import com.github.terrakok.cicerone.Router
+import com.gb.dictionary.di.component.DaggerComponent
 
 class App : Application() {
 
-    private val cicerone: Cicerone<Router> by lazy { Cicerone.create() }
-
-    val navigationHolder
-        get() = cicerone.getNavigatorHolder()
-
-    val router
-        get() = cicerone.router
+    val appComponent by lazy {
+        DaggerComponent.builder()
+            .build()
+    }
 
     override fun onCreate() {
         super.onCreate()
