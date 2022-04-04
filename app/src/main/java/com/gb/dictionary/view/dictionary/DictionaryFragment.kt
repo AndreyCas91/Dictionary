@@ -7,15 +7,14 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.gb.dictionary.App
 import com.gb.dictionary.databinding.FragmentDictionaryBinding
 import com.gb.dictionary.model.data.DataModel
 import com.gb.dictionary.view.base.BackButtonListener
 import com.gb.dictionary.view.dictionary.adapter.DictionaryAdapter
 import com.github.terrakok.cicerone.Router
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DictionaryFragment: Fragment(), BackButtonListener{
 
@@ -24,19 +23,16 @@ class DictionaryFragment: Fragment(), BackButtonListener{
     private val binding
         get() = _binding!!
 
-    @Inject
-    lateinit var router: Router
+    private val router: Router by inject()
 
-    private val viewModel: DictionaryViewModel by lazy {
-        ViewModelProvider(this).get(DictionaryViewModel::class.java)
-    }
+    private val viewModel: DictionaryViewModel by viewModel()
 
     private val adapter by lazy {
         DictionaryAdapter()
     }
 
     private val initWord by lazy {
-        requireArguments().getString(WORD_KEY)
+            requireArguments().getString(WORD_KEY)
     }
 
     override fun onCreateView(
@@ -52,11 +48,12 @@ class DictionaryFragment: Fragment(), BackButtonListener{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getWord(initWord!!).observe(viewLifecycleOwner, Observer{
-            rangerData(it)
-        })
+        initWord?.let {
+            viewModel.getWord(it).observe(viewLifecycleOwner, Observer{ list ->
+                rangerData(list)
+            })
+        }
 
-        App.instance.appComponent.inject(this)
 
         binding.rvResultSearch.layoutManager = LinearLayoutManager(requireContext())
         binding.rvResultSearch.adapter = adapter
