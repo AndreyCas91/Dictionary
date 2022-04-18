@@ -1,30 +1,30 @@
 package com.gb.dictionary.view.dictionary
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.gb.dictionary.model.data.DataModel
-import com.gb.dictionary.model.domain.ApiWordsRepos
-import com.gb.dictionary.model.network.ApiHolder
+import com.gb.dictionary.model.domain.IApiWordsRepos
 import com.gb.dictionary.viewmodel.BaseViewModel
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 
-class DictionaryViewModel (
-    private val apiWordsRepos: ApiWordsRepos = ApiWordsRepos(ApiHolder.ApiService)
-        ): BaseViewModel() {
+class DictionaryViewModel(
+    private val apiWordsRepos: IApiWordsRepos
+) : BaseViewModel() {
 
     override fun getWord(word: String): LiveData<List<DataModel>> {
+        cancelJob()
 
-        compositeDisposable.add(
-            apiWordsRepos.getWords(word)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    mutableList.value = it
-                },{
-                    Log.d("Error loading", it.message.toString())
-                })
-        )
+        try {
+            viewModelCoroutineScope.launch {
+                withContext(Dispatchers.IO) {
+                    mutableList.postValue(apiWordsRepos.getWords(word))
+                }
+            }
+        }catch (e: Throwable){
+            Timber.w(e, "Error $e")
+        }
         return super.getWord(word)
     }
 

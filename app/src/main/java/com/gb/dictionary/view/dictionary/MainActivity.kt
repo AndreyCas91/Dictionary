@@ -2,7 +2,6 @@ package com.gb.dictionary.view.dictionary
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.gb.dictionary.App
 import com.gb.dictionary.R
 import com.gb.dictionary.databinding.ActivityMainBinding
 import com.gb.dictionary.screens.AppScreens
@@ -10,21 +9,18 @@ import com.gb.dictionary.view.base.BackButtonListener
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private lateinit var binding: ActivityMainBinding
 
-    @Inject
-    lateinit var router: Router
+    private val router: Router by inject()
 
-    @Inject
-    lateinit var navigationHolder: NavigatorHolder
+    private val navigationHolder: NavigatorHolder by inject()
 
     private val navigator = AppNavigator(this, R.id.container)
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +32,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             router.replaceScreen(AppScreens.dictionaryScreen(binding.inputEditText.text.toString()))
         }
 
-        App.instance.appComponent.inject(this)
+        Timber.plant(Timber.DebugTree())
     }
 
     override fun onResumeFragments() {
