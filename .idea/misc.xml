@@ -4,8 +4,11 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Project/MyProject/Dictionary/app/src/main/res/layout/activity_main.xml" value="0.1816123188405797" />
+        <entry key="..\:/Project/MyProject/Dictionary/app/src/main/res/layout/activity_word_history.xml" value="0.14356884057971014" />
         <entry key="..\:/Project/MyProject/Dictionary/app/src/main/res/layout/fragment_dictionary.xml" value="0.1816123188405797" />
+        <entry key="..\:/Project/MyProject/Dictionary/app/src/main/res/layout/fragment_word_history.xml" value="0.14356884057971014" />
         <entry key="..\:/Project/MyProject/Dictionary/app/src/main/res/layout/fragment_words.xml" value="0.10371376811594203" />
+        <entry key="..\:/Project/MyProject/Dictionary/app/src/main/res/layout/item_history_search.xml" value="0.2246376811594203" />
         <entry key="..\:/Project/MyProject/Dictionary/app/src/main/res/layout/item_result_search.xml" value="0.1816123188405797" />
       </map>
     </option>

@@ -12,22 +12,23 @@ abstract class BaseViewModel(
 ) : ViewModel() {
 
     protected val viewModelCoroutineScope = CoroutineScope(
-        Dispatchers.Main
+        Dispatchers.IO
                 + SupervisorJob()
                 + CoroutineExceptionHandler {_, throwble ->
             Timber.w(throwble, "Error thread $throwble")
         }
     )
 
-    open fun getWord(word: String): LiveData<List<DataModel>> = mutableList
+    open fun getWord(word: String, isOnline: Boolean): LiveData<List<DataModel>> = mutableList
 
     override fun onCleared() {
         super.onCleared()
+        viewModelCoroutineScope.cancel()
         cancelJob()
     }
 
     protected fun cancelJob(){
-        viewModelCoroutineScope.coroutineContext.cancelChildren()
+        viewModelCoroutineScope.coroutineContext.cancel()
     }
 
 }
