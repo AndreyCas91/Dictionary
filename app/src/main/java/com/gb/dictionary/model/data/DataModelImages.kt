@@ -5,11 +5,8 @@ import com.google.gson.annotations.Expose
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class DataModel (
-    @Expose
-    val text: String,
+data class DataModelImages(
 
     @Expose
-    val meanings: List<DataModelImages>? = null
-
-): Parcelable
+    val imageUrl: String? = null
+) : Parcelable

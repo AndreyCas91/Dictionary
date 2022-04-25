@@ -9,7 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 
-object ApiHolder {
+class ApiHolder {
 
     val ApiService by lazy {
         retrofit.create<ApiService>()
@@ -31,10 +31,19 @@ object ApiHolder {
 
     private val retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl("https://dictionary.skyeng.ru/api/public/v1/")
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .client(okHttpClient)
             .build()
     }
+
+    companion object {
+        private const val BASE_URL = "https://dictionary.skyeng.ru/api/public/v1/"
+    }
+
 }
+
+
+
+

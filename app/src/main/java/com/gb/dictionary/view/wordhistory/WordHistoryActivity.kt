@@ -1,22 +1,20 @@
-package com.gb.dictionary.view.dictionary
+package com.gb.dictionary.view.wordhistory
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.gb.dictionary.R
-import com.gb.dictionary.databinding.ActivityMainBinding
+import com.gb.dictionary.databinding.ActivityWordHistoryBinding
 import com.gb.dictionary.screens.AppScreens
 import com.gb.dictionary.view.base.BackButtonListener
-import com.gb.dictionary.view.wordhistory.WordHistoryActivity
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
-class MainActivity : AppCompatActivity(R.layout.activity_main) {
+class WordHistoryActivity : AppCompatActivity(R.layout.activity_word_history) {
 
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityWordHistoryBinding
 
     private val router: Router by inject()
 
@@ -27,22 +25,13 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityWordHistoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.inputLayout.setEndIconOnClickListener {
-            router.replaceScreen(AppScreens.dictionaryScreen(binding.inputEditText.text.toString()))
-        }
-
-        binding.btnSearchHistory.setOnClickListener {
-            val intent = Intent(this, WordHistoryActivity::class.java)
-            startActivity(intent)
-        }
+        router.replaceScreen(AppScreens.wordHistoryScreen())
 
         Timber.plant(Timber.DebugTree())
     }
-
 
     override fun onResumeFragments() {
         super.onResumeFragments()
